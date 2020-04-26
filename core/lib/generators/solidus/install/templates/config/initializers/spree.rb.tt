@@ -34,6 +34,11 @@ Spree.config do |config|
   # See https://github.com/solidusio/solidus/pull/3456 for more info.
   config.raise_with_invalid_currency = false
 
+  # Set this configuration to `false` to allow promotions
+  # with no associated actions to be enabled for use by customers.
+  # See https://github.com/solidusio/solidus/issues/2777 for more info.
+  config.actionless_promotion_validation = true
+
   # Permission Sets:
 
   # Uncomment and customize the following line to add custom permission sets

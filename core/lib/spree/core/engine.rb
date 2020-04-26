@@ -63,6 +63,14 @@ module Spree
             'Spree::LineItem::CurrencyMismatch will not be raised anymore.',
             caller
           )
+          if Spree::Config.enable_actionless_promotions == true
+            Spree::Deprecation.warn(
+                'Spree::Config.enable_actionless_promotions set to false is ' \
+            'deprecated. Please note that by switching this value, ' \
+            'promotions with no actions can be enabled.',
+                caller
+            )
+          end
         end
       end
 

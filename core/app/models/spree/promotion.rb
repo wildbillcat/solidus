@@ -33,6 +33,7 @@ module Spree
     validates :per_code_usage_limit, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates :description, length: { maximum: 255 }
     validate :apply_automatically_disallowed_with_paths
+    validate :apply_automatically_disallowed_without_actions
 
     before_save :normalize_blank_values
 
@@ -42,7 +43,8 @@ module Spree
       table = arel_table
       time = Time.current
       where(table[:starts_at].eq(nil).or(table[:starts_at].lt(time))).
-        where(table[:expires_at].eq(nil).or(table[:expires_at].gt(time)))
+        where(table[:expires_at].eq(nil).or(table[:expires_at].gt(time))).
+          where(table[:disabled].eq(false))
     end
     scope :applied, -> { joins(:order_promotions).distinct }
 
@@ -73,7 +75,7 @@ module Spree
     end
 
     def expired?
-      expires_at.present? && expires_at < Time.current
+      (expires_at.present? && expires_at < Time.current)
     end
 
     def not_expired?
@@ -81,7 +83,7 @@ module Spree
     end
 
     def active?
-      started? && not_expired?
+      started? && not_expired? && !disabled
     end
 
     def inactive?
@@ -261,6 +263,12 @@ module Spree
       return unless apply_automatically
 
       errors.add(:apply_automatically, :disallowed_with_path) if path.present?
+    end
+
+    def apply_automatically_disallowed_without_actions
+      return unless Spree::Config[:actionless_promotion_validation]
+
+      errors.add(:disabled, :disabled_without_actions) unless actions.present? || disabled
     end
 
     def eligibility_excluded_orders(promotable)

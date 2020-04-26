@@ -52,6 +52,12 @@
         <%= f.field_hint :expires_at %>
         <%= f.text_field :expires_at, value: datepicker_field_value(@promotion.expires_at, with_time: true), placeholder: t(".expires_at_placeholder"), class: 'datepicker datepicker-to fullwidth', data: { :'enable-time' => true, :'default-hour' => 0 } %>
       </div>
+
+      <div id="disabled_field" class="field">
+        <%= f.label :disabled %>
+        <%= f.field_hint :disabled %>
+        <%= f.check_box :disabled, class: 'fullwidth', checked: (Spree::Config[:actionless_promotion_validation] && @promotion.actions.present? ? @promotion.disabled : true) %>
+      </div>
     </div>
   </div>
 </fieldset>
