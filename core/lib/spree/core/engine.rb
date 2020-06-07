@@ -64,6 +64,14 @@ module Spree
             caller
           )
         end
+        if Spree::Config.actionless_promotion_inactive == false
+          Spree::Deprecation.warn(
+            'Spree::Config.actionless_promotion_inactive set to false is ' \
+            'deprecated. Please note that by switching this value, ' \
+            'promotions with no actions will be active.',
+            caller
+          )
+        end
       end
 
       # Load in mailer previews for apps to use in development.
